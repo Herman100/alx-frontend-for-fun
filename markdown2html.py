@@ -9,68 +9,87 @@ import os.path
 import re
 import hashlib
 
-def usage_error():
-    """Prints usage error message and exits."""
-    print('Usage: ./markdown2html.py README.md README.html', file=sys.stderr)
-    exit(1)
-
-def file_error(file_path):
-    """Prints file error message and exits."""
-    print(f'Missing {file_path}', file=sys.stderr)
-    exit(1)
-
-def replace_syntax(line):
-    """Replaces Markdown syntax with HTML tags."""
-    line = line.replace('**', '<b>', 1)
-    line = line.replace('**', '</b>', 1)
-    line = line.replace('__', '<em>', 1)
-    line = line.replace('__', '</em>', 1)
-    return line
-
-def md5_replacement(line):
-    """Replaces MD5 syntax with hashed values."""
-    md5 = re.findall(r'\[\[.+?\]\]', line)
-    md5_inside = re.findall(r'\[\[(.+?)\]\]', line)
-    if md5:
-        line = line.replace(md5[0], hashlib.md5(md5_inside[0].encode()).hexdigest())
-    return line
-
-def remove_letter_c(line):
-    """Removes 'C' or 'c' within double parenthesis."""
-    remove_letter_c = re.findall(r'\(\(.+?\)\)', line)
-    remove_c_more = re.findall(r'\(\((.+?)\)\)', line)
-    if remove_letter_c:
-        remove_c_more = ''.join(c for c in remove_c_more[0] if c not in 'Cc')
-        line = line.replace(remove_letter_c[0], remove_c_more)
-    return line
-
-def convert_to_html(input_file, output_file):
-    """Converts Markdown content to HTML."""
-    with open(input_file) as read:
-        with open(output_file, 'w') as html:
-            unordered_start, ordered_start, paragraph = False, False, False
-            for line in read:
-                line = replace_syntax(line)
-                line = md5_replacement(line)
-                line = remove_letter_c(line)
-
-                length = len(line)
-                headings = line.lstrip('#')
-                heading_num = length - len(headings)
-                unordered = line.lstrip('-')
-                unordered_num = length - len(unordered)
-                ordered = line.lstrip('*')
-                ordered_num = length - len(ordered)
-
-                # ... (rest of the code remains the same)
-
 if __name__ == '__main__':
     if len(sys.argv) < 3:
-        usage_error()
+        print('Usage: ./markdown2html.py README.md README.html',
+              file=sys.stderr)
+        exit(1)
 
     if not os.path.isfile(sys.argv[1]):
-        file_error(sys.argv[1])
+        print('Missing {}'.format(sys.argv[1]), file=sys.stderr)
+        exit(1)
 
-    convert_to_html(sys.argv[1], sys.argv[2])
+    with open(sys.argv[1]) as f:
+        with open(sys.argv[2], 'w') as md_ml:
+            ulist, olist, p_tag = False, False, False
+
+            for text in f:
+                text = text.replace('**', '<b>', 1)
+                text = text.replace('**', '</b>', 1)
+                text = text.replace('__', '<em>', 1)
+                text = text.replace('__', '</em>', 1)
+
+                md5 = re.findall(r'\[\[.+?\]\]', text)
+                md5_inside = re.findall(r'\[\[(.+?)\]\]', text)
+                if md5:
+                    text = text.replace(md5[0], hashlib.md5(
+                        md5_inside[0].encode()).hexdigest())
+
+                rm_c = re.findall(r'\(\(.+?\)\)', text)
+                rm_cs = re.findall(r'\(\((.+?)\)\)', text)
+                if rm_c:
+                    rm_cs = ''.join(
+                        c for c in rm_cs[0] if c not in 'Cc')
+                    text = text.replace(rm_c[0], rm_cs)
+
+                text_len = len(text)
+                headers = text.lstrip('#')
+                h_levels = text_len - len(headers)
+                ul = text.lstrip('-')
+                ul_number = text_len - len(ul)
+                ol = text.lstrip('*')
+                ol_number = text_len - len(ol)
+
+                if 1 <= h_levels <= 6:
+                    text = '<h{}>'.format(
+                        h_levels) + headers.strip() + '</h{}>\n'.format(
+                        h_levels)
+
+                if ul_number:
+                    if not ulist:
+                        md_ml.write('<ul>\n')
+                        ulist = True
+                    text = '<li>' + ul.strip() + '</li>\n'
+                if ulist and not ul_number:
+                    md_ml.write('</ul>\n')
+                    ulist = False
+
+                if ol_number:
+                    if not olist:
+                        md_ml.write('<ol>\n')
+                        olist = True
+                    text = '<li>' + ol.strip() + '</li>\n'
+                if olist and not ol_number:
+                    md_ml.write('</ol>\n')
+                    olist = False
+
+                if not (h_levels or ulist or olist):
+                    if not p_tag and text_len > 1:
+                        md_ml.write('<p>\n')
+                        p_tag = True
+                    elif text_len > 1:
+                        md_ml.write('<br/>\n')
+                    elif p_tag:
+                        md_ml.write('</p>\n')
+                        p_tag = False
+
+                if text_len > 1:
+                    md_ml.write(text)
+
+            if ulist:
+                md_ml.write('</ul>\n')
+            if olist:
+                md_ml.write('</ol>\n')
+            if p_tag:
+                md_ml.write('</p>\n')
     exit(0)
-
