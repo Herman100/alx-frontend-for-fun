@@ -23,16 +23,35 @@ def markdown2html():
         print(f"Missing {markdown_file}", file=sys.stderr)
         exit(1)
 
-    with open(markdown_file, 'r') as f:
-        lines = f.readlines()
+    output_file = sys.argv[2]
 
-    html_lines = []
-    for line in lines:
-        match = re.match(r'(#{1,6})\s(.*)', line)
-        if match:
-            level = len(match.group(1))
-            content = match.group(2)
-            html_lines.append(f'<h{level}>{content}</h{level}>')
+    with open(markdown_file, 'r') as md_file:
+        markdown_content = md_file.read()
+
+    html_content = convert_headings(markdown_content)
+
+    with open(output_file, 'w') as html_file:
+        html_file.write(html_content)
+
+
+def convert_headings(markdown_content):
+    """
+    Convert Markdown headings to HTML.
+    """
+    headings = [
+        (r'###### (.*)', r'<h6>\1</h6>'),
+        (r'##### (.*)', r'<h5>\1</h5>'),
+        (r'#### (.*)', r'<h4>\1</h4>'),
+        (r'### (.*)', r'<h3>\1</h3>'),
+        (r'## (.*)', r'<h2>\1</h2>'),
+        (r'# (.*)', r'<h1>\1</h1>')
+    ]
+
+    for markdown_pattern, html_replace in headings:
+        markdown_content = re.sub(markdown_pattern, html_replace,
+                                  markdown_content)
+
+    return markdown_content
 
 
 if __name__ == "__main__":
