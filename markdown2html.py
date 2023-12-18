@@ -59,10 +59,12 @@ def convert_lists(markdown_content):
     """
     Convert Markdown lists to HTML.
     """
-    markdown_content = re.sub(r'^-\s(.*)$', r'<ul>\n<li>\1</li>\n</ul>',
-                              markdown_content, flags=re.MULTILINE)
+    html_content = re.sub(r'^(?!\s*$)(?:- (.+)$\n?)+', r'<ul>\n\g<0></ul>',
+                          markdown_content, flags=re.MULTILINE)
+    html_content = re.sub(r'^- (.+)$', r'<li>\1</li>',
+                          html_content, flags=re.MULTILINE)
 
-    return markdown_content
+    return html_content
 
 
 if __name__ == "__main__":
