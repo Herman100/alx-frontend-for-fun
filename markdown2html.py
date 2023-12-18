@@ -30,6 +30,7 @@ def markdown2html():
 
     html_content = convert_headings(markdown_content)
     html_content = convert_lists(html_content)
+    html_content = convert_ordered_lists(html_content)
 
     with open(output_file, 'w') as html_file:
         html_file.write(html_content)
@@ -57,11 +58,23 @@ def convert_headings(markdown_content):
 
 def convert_lists(markdown_content):
     """
-    Convert Markdown lists to HTML.
+    Convert Markdown unordered lists to HTML.
     """
     html_content = re.sub(r'^(?!\s*$)(?:- (.+)$\n?)+', r'<ul>\n\g<0></ul>',
                           markdown_content, flags=re.MULTILINE)
     html_content = re.sub(r'^- (.+)$', r'<li>\1</li>',
+                          html_content, flags=re.MULTILINE)
+
+    return html_content
+
+
+def convert_ordered_lists(markdown_content):
+    """
+    Convert Markdown ordered lists to HTML.
+    """
+    html_content = re.sub(r'^(?!\s*$)(?:\* (.+)$\n?)+', r'<ol>\n\g<0></ol>',
+                          markdown_content, flags=re.MULTILINE)
+    html_content = re.sub(r'^\* (.+)$', r'<li>\1</li>',
                           html_content, flags=re.MULTILINE)
 
     return html_content
