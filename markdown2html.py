@@ -29,6 +29,7 @@ def markdown2html():
         markdown_content = md_file.read()
 
     html_content = convert_headings(markdown_content)
+    html_content = convert_lists(html_content)
 
     with open(output_file, 'w') as html_file:
         html_file.write(html_content)
@@ -48,8 +49,18 @@ def convert_headings(markdown_content):
     ]
 
     for markdown_pattern, html_replace in headings:
-        markdown_content = re.sub(markdown_pattern, html_replace,
-                                  markdown_content)
+        markdown_content = re.sub(markdown_pattern,
+                                  html_replace, markdown_content)
+
+    return markdown_content
+
+
+def convert_lists(markdown_content):
+    """
+    Convert Markdown lists to HTML.
+    """
+    markdown_content = re.sub(r'^-\s(.*)$', r'<ul>\n<li>\1</li>\n</ul>',
+                              markdown_content, flags=re.MULTILINE)
 
     return markdown_content
 
