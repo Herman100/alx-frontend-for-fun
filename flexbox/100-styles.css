@@ -801,3 +801,7 @@ ul.row {
   color: var(--color-grey);
   text-align: center;
 }
+
+:root {
+  --color-grey: #a0a0a0;
+}
