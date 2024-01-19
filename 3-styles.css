@@ -1,0 +1,127 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+}
+
+
+
+
+nav {
+    display: block;
+    text-transform: uppercase;
+    padding: 10px 10px;
+}
+
+
+.menu-open {
+    display: none;
+}
+
+
+.menu-open-button {
+    cursor: pointer;
+    background-color: crimson;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 36px;
+    height: 36px;
+    border-radius: 100%;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+
+input[type=checkbox]+label {
+    .menu-line {
+        display: block;
+        width: 22px;
+        height: 2px;
+        background-color: #fff;
+        transition: all 0.2s;
+    }
+
+    .menu-line-1 {
+        transform: rotate(0);
+    }
+
+    .mmenu-line-2 {
+        opacity: 1;
+    }
+}
+
+input[type=checkbox]:checked+label {
+    .menu-line-1 {
+        transform: rotate(45deg);
+        transform-origin: 10% 10%;
+        margin-left: 5px;
+
+    }
+
+    .menu-line-2 {
+        opacity: 0;
+    }
+
+    .menu-line-3 {
+        transform: rotate(-45deg);
+        transform-origin: 10% 90%;
+        margin-left: 5px;
+
+    }
+}
+
+
+.menu-item {
+    display: block;
+    cursor: pointer;
+    background-color: crimson;
+    display: flex;
+    width: 36px;
+    height: 36px;
+    border-radius: 100%;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    translate: -160%;
+    transition: fade-in 5s;
+    transition-delay: 2s;
+
+}
+
+
+
+input[type=checkbox]:checked~.menu-item {
+    translate: 0;
+}
+
+
+
+
+.menu-item:hover {
+    display: block;
+    cursor: pointer;
+    background-color: #fff;
+    display: flex;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #cccc;
+    border-radius: 100%;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+
+    .fa {
+        color: crimson;
+    }
+}
+
+a {
+    text-decoration: none;
+}
+
+
+.fa {
+    color: #fff;
+}
