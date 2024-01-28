@@ -1,0 +1,16 @@
+/* Base class for font size */
+.info {
+  font-size: 12px;
+}
+
+/* Success class with info styles and specific color */
+.success {
+  @extend .info;
+  color: #00FF00;
+}
+
+/* Warning class with info styles and specific color */
+.warning {
+  @extend .info;
+  color: #FF0000;
+}
