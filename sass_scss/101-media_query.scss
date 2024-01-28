@@ -1,0 +1,11 @@
+/* Set font size for h1 tags */
+h1 {
+  font-size: 20px;
+}
+
+/* Change font size for h1 tags on small screens */
+@media screen and (max-width: 320px) {
+  h1 {
+    font-size: 14px;
+  }
+}
