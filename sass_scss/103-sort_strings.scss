@@ -1,0 +1,6 @@
+/* Import list to sort */
+@import '103-sort_list';
+
+/* Sort list and print in debug output */
+$list_sorted: sort($list_to_sort);
+@debug $list_sorted;
